@@ -1,0 +1,130 @@
+// assets/js/validation.js
+import { saveVolunteer } from './storage.js';
+
+function clearErrors(form) {
+  const errorMessages = form.querySelectorAll('.error-message');
+  errorMessages.forEach((el) => (el.textContent = ''));
+
+  const fields = form.querySelectorAll('.field-error');
+  fields.forEach((field) => field.classList.remove('field-error'));
+}
+
+function showError(input, message) {
+  input.classList.add('field-error');
+  const errorContainer = input
+    .closest('form')
+    .querySelector(`[data-error-for="${input.id}"]`);
+  if (errorContainer) {
+    errorContainer.textContent = message;
+  }
+}
+
+function validateEmail(value) {
+  // regex simples só para o trabalho
+  const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return regex.test(value);
+}
+
+function validatePhone(value) {
+  // só checa se tem pelo menos 10 dígitos
+  const digits = value.replace(/\D/g, '');
+  return digits.length >= 10;
+}
+
+function validateForm(form) {
+  clearErrors(form);
+  let isValid = true;
+
+  const inputs = form.querySelectorAll('input, select, textarea');
+
+  inputs.forEach((input) => {
+    const value = input.value.trim();
+    const isRequired = input.dataset.required === 'true';
+    const type = input.dataset.type;
+    const minLength = input.dataset.minlength
+      ? parseInt(input.dataset.minlength, 10)
+      : null;
+    const matchSelector = input.dataset.match;
+
+    // CAMPOS OBRIGATÓRIOS
+    if (isRequired && !value) {
+      showError(input, 'Campo obrigatório.');
+      isValid = false;
+      return;
+    }
+
+    // TIPO EMAIL
+    if (type === 'email' && value && !validateEmail(value)) {
+      showError(input, 'E-mail inválido.');
+      isValid = false;
+    }
+
+    // TIPO TELEFONE
+    if (type === 'phone' && value && !validatePhone(value)) {
+      showError(input, 'Telefone inválido. Informe DDD + número.');
+      isValid = false;
+    }
+
+    // TAMANHO MÍNIMO
+    if (minLength && value && value.length < minLength) {
+      showError(input, `Digite pelo menos ${minLength} caracteres.`);
+      isValid = false;
+    }
+
+    // CAMPOS QUE DEVEM SER IGUAIS (ex: confirmar e-mail)
+    if (matchSelector && value) {
+      const otherField = form.querySelector(matchSelector);
+      if (otherField && otherField.value.trim() !== value) {
+        showError(input, 'O campo não confere com o original.');
+        isValid = false;
+      }
+    }
+
+    // INTERVALO numérico (se quiser checar min/max)
+    if (input.type === 'number' && value) {
+      const num = Number(value);
+      if (input.min && num < Number(input.min)) {
+        showError(input, `O valor mínimo é ${input.min}.`);
+        isValid = false;
+      }
+      if (input.max && num > Number(input.max)) {
+        showError(input, `O valor máximo é ${input.max}.`);
+        isValid = false;
+      }
+    }
+  });
+
+  return isValid;
+}
+
+export function initValidation() {
+  document.addEventListener('submit', (event) => {
+    const form = event.target;
+    if (!form.matches('[data-validate="true"]')) return;
+
+    event.preventDefault();
+
+    const isValid = validateForm(form);
+    const feedback = document.getElementById('form-feedback');
+
+    if (!isValid) {
+      if (feedback) {
+        feedback.innerHTML =
+          '<p class="error-message">Por favor, corrija os campos destacados.</p>';
+      }
+      return;
+    }
+
+    // Se chegou aqui, o formulário é válido.
+    // Simulando envio e salvando no localStorage:
+    const formData = Object.fromEntries(new FormData(form).entries());
+    saveVolunteer(formData);
+
+    if (feedback) {
+      feedback.innerHTML =
+        '<p class="success-message">Cadastro realizado com sucesso! (simulação)</p>';
+    }
+
+    form.reset();
+  });
+}

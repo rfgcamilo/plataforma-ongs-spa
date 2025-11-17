@@ -1,0 +1,156 @@
+// assets/js/templates.js
+import { getVolunteers } from './storage.js';
+
+export function createHomeView() {
+  const section = document.createElement('section');
+
+  section.innerHTML = `
+    <h1>Bem-vindo à Plataforma ONGs</h1>
+    <p>
+      Esta aplicação web foi desenvolvida como projeto acadêmico para
+      apoiar o terceiro setor, permitindo que ONGs divulguem projetos
+      e cadastrem voluntários.
+    </p>
+    <p>
+      Use o menu para navegar entre <strong>Início</strong>, 
+      <strong>Projetos</strong> e <strong>Cadastro de Voluntário</strong>.
+    </p>
+  `;
+
+  return section;
+}
+
+export function createProjetosView() {
+  const section = document.createElement('section');
+
+  section.innerHTML = `
+    <h2>Projetos em Destaque</h2>
+    <p>Aqui, a ONG pode divulgar projetos em andamento.</p>
+
+    <ul>
+      <li><strong>Projeto Acolher</strong> – Apoio psicológico a famílias vulneráveis.</li>
+      <li><strong>Educar para Transformar</strong> – Reforço escolar para crianças.</li>
+      <li><strong>Alimento Solidário</strong> – Distribuição de cestas básicas.</li>
+    </ul>
+
+    <h3>Voluntários cadastrados (simulação)</h3>
+    <div id="volunteers-list"></div>
+  `;
+
+  // preenche voluntários salvos no localStorage (simulação de app real)
+  const volunteersContainer = section.querySelector('#volunteers-list');
+  const volunteers = getVolunteers();
+
+  if (!volunteers.length) {
+    volunteersContainer.innerHTML = '<p>Nenhum voluntário cadastrado ainda.</p>';
+  } else {
+    volunteers.forEach((v) => {
+      const card = document.createElement('div');
+      card.classList.add('volunteer-card');
+      card.innerHTML = `
+        <strong>${v.nome}</strong> (${v.email})<br>
+        Área de interesse: ${v.areaInteresse}<br>
+        Disponibilidade: ${v.disponibilidade}
+      `;
+      volunteersContainer.appendChild(card);
+    });
+  }
+
+  return section;
+}
+
+export function createVoluntariosView() {
+  const section = document.createElement('section');
+
+  section.innerHTML = `
+    <h2>Cadastro de Voluntário</h2>
+    <p>Preencha seus dados para apoiar os projetos da ONG.</p>
+
+    <div id="form-feedback"></div>
+
+    <form id="form-voluntario" data-validate="true">
+      <div class="form-field">
+        <label for="nome">Nome completo *</label>
+        <input 
+          type="text" 
+          id="nome" 
+          name="nome"
+          data-required="true"
+          data-minlength="3"
+        />
+        <div class="error-message" data-error-for="nome"></div>
+      </div>
+
+      <div class="form-field">
+        <label for="email">E-mail *</label>
+        <input 
+          type="email" 
+          id="email" 
+          name="email"
+          data-required="true"
+          data-type="email"
+        />
+        <div class="error-message" data-error-for="email"></div>
+      </div>
+
+      <div class="form-field">
+        <label for="confirmEmail">Confirmar e-mail *</label>
+        <input 
+          type="email" 
+          id="confirmEmail" 
+          name="confirmEmail"
+          data-required="true"
+          data-type="email"
+          data-match="#email"
+        />
+        <div class="error-message" data-error-for="confirmEmail"></div>
+      </div>
+
+      <div class="form-field">
+        <label for="telefone">Telefone (com DDD)</label>
+        <input 
+          type="tel" 
+          id="telefone" 
+          name="telefone"
+          data-type="phone"
+        />
+        <div class="error-message" data-error-for="telefone"></div>
+      </div>
+
+      <div class="form-field">
+        <label for="areaInteresse">Área de interesse *</label>
+        <select id="areaInteresse" name="areaInteresse" data-required="true">
+          <option value="">Selecione...</option>
+          <option value="Educação">Educação</option>
+          <option value="Saúde">Saúde</option>
+          <option value="Assistência Social">Assistência Social</option>
+          <option value="Comunicação">Comunicação</option>
+        </select>
+        <div class="error-message" data-error-for="areaInteresse"></div>
+      </div>
+
+      <div class="form-field">
+        <label for="disponibilidade">Disponibilidade (horas/semana) *</label>
+        <input 
+          type="number" 
+          id="disponibilidade" 
+          name="disponibilidade"
+          data-required="true"
+          min="1"
+          max="40"
+        />
+        <div class="error-message" data-error-for="disponibilidade"></div>
+      </div>
+
+      <div class="form-field">
+        <label for="motivacao">Por que quer ser voluntário?</label>
+        <textarea id="motivacao" name="motivacao" rows="4"></textarea>
+        <div class="error-message" data-error-for="motivacao"></div>
+      </div>
+
+      <button type="submit">Enviar cadastro</button>
+    </form>
+  `;
+
+  return section;
+}

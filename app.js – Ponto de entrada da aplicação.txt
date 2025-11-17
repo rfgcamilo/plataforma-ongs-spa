@@ -1,0 +1,8 @@
+// assets/js/app.js
+import { initRouter } from './router.js';
+import { initValidation } from './validation.js';
+
+document.addEventListener('DOMContentLoaded', () => {
+  initRouter();
+  initValidation();
+});

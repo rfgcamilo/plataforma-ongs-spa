@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Plataforma ONGs - Terceiro Setor</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="./assets/css/style.css" />
+</head>
+<body>
+  <header>
+    <nav class="navbar">
+      <h1 class="logo">Plataforma ONGs</h1>
+      <ul class="nav-links">
+        <li><a href="#home">Início</a></li>
+        <li><a href="#projetos">Projetos</a></li>
+        <li><a href="#voluntarios">Cadastro de Voluntário</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main id="app"><!-- Aqui o JS vai injetar as views --></main>
+
+  <footer>
+    <p>&copy; 2025 Plataforma ONGs - Projeto Acadêmico.</p>
+  </footer>
+
+  <!-- IMPORTANTE: usar type="module" para permitir imports/exports -->
+  <script type="module" src="./assets/js/app.js"></script>
+</body>
+</html>
