@@ -1,0 +1,32 @@
+// assets/js/router.js
+import {
+  createHomeView,
+  createProjetosView,
+  createVoluntariosView
+} from './templates.js';
+
+const routes = {
+  '#home': createHomeView,
+  '#projetos': createProjetosView,
+  '#voluntarios': createVoluntariosView
+};
+
+function renderRoute() {
+  const hash = window.location.hash || '#home';
+  const viewFn = routes[hash] || routes['#home'];
+
+  const app = document.getElementById('app');
+  app.innerHTML = ''; // limpa conteúdo anterior
+
+  const viewElement = viewFn();
+  app.appendChild(viewElement);
+}
+
+export function initRouter() {
+  window.addEventListener('hashchange', () => {
+    renderRoute();
+  });
+
+  // renderizar rota inicial
+  renderRoute();
+}
